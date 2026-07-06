@@ -35,3 +35,34 @@ def get_bookings():
         })
 
     return jsonify(result), 200
+
+def update_booking(id):
+    data = request.get_json()
+
+    booking = Booking.query.get(id)
+
+    if not booking:
+        return jsonify({"message": "Booking not found"}), 404
+
+    booking.user_id = data["user_id"]
+    booking.schedule_id = data["schedule_id"]
+    booking.seat_number = data["seat_number"]
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Booking updated successfully"
+    }), 200
+
+def delete_booking(id):
+    booking = Booking.query.get(id)
+
+    if not booking:
+        return jsonify({"message": "Booking not found"}), 404
+
+    db.session.delete(booking)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Booking deleted successfully"
+    }), 200
