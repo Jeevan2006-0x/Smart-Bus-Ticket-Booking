@@ -8,6 +8,7 @@ from database.db import db
 from routes.auth_routes import auth_bp
 from routes.bus_routes import bus_bp
 from routes.schedule_routes import schedule_bp
+from routes.booking_routes import booking_bp
 
 # Import models
 from models.user import User
@@ -33,6 +34,7 @@ CORS(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(bus_bp)
 app.register_blueprint(schedule_bp)
+app.register_blueprint(booking_bp)
 
 @app.route("/")
 def home():
