@@ -1,96 +1,50 @@
-from flask import jsonify, request
-
-# Temporary Data
-buses = [
-    {
-        "id": 1,
-        "bus_name": "KPN Travels",
-        "source": "Chennai",
-        "destination": "Coimbatore",
-        "departure": "08:00 AM",
-        "arrival": "03:00 PM",
-        "price": 750
-    },
-    {
-        "id": 2,
-        "bus_name": "SRS Travels",
-        "source": "Chennai",
-        "destination": "Madurai",
-        "departure": "09:30 AM",
-        "arrival": "05:30 PM",
-        "price": 680
-    }
-]
+from flask import request, jsonify
+from database.db import db
+from models.bus import Bus
 
 
-# -----------------------------
-# Get All Buses
-# -----------------------------
-def get_all_buses():
-    return jsonify(buses)
-
-
-# -----------------------------
-# Get Bus By ID
-# -----------------------------
-def get_bus(bus_id):
-
-    for bus in buses:
-        if bus["id"] == bus_id:
-            return jsonify(bus)
-
-    return jsonify({"message": "Bus Not Found"}), 404
-
-
-# -----------------------------
-# Add Bus
-# -----------------------------
 def add_bus():
+    data = request.get_json()
 
-    new_bus = request.get_json()
+    bus_number = data.get("bus_number")
+    bus_name = data.get("bus_name")
+    bus_type = data.get("bus_type")
+    total_seats = data.get("total_seats")
 
-    buses.append(new_bus)
+    # Check if bus number already exists
+    existing_bus = Bus.query.filter_by(bus_number=bus_number).first()
+
+    if existing_bus:
+        return jsonify({
+            "message": "Bus already exists"
+        }), 400
+
+    bus = Bus(
+        bus_number=bus_number,
+        bus_name=bus_name,
+        bus_type=bus_type,
+        total_seats=total_seats
+    )
+
+    db.session.add(bus)
+    db.session.commit()
 
     return jsonify({
-        "message": "Bus Added Successfully",
-        "bus": new_bus
+        "message": "Bus Added Successfully"
     }), 201
+def get_buses():
 
+    buses = Bus.query.all()
 
-# -----------------------------
-# Update Bus
-# -----------------------------
-def update_bus(bus_id):
-
-    updated_bus = request.get_json()
+    data = []
 
     for bus in buses:
+        data.append({
+            "id": bus.id,
+            "bus_number": bus.bus_number,
+            "bus_name": bus.bus_name,
+            "bus_type": bus.bus_type,
+            "total_seats": bus.total_seats
+        })
 
-        if bus["id"] == bus_id:
-
-            bus.update(updated_bus)
-
-            return jsonify({
-                "message": "Bus Updated Successfully",
-                "bus": bus
-            })
-
-    return jsonify({"message": "Bus Not Found"}), 404
-
-
-# -----------------------------
-# Delete Bus
-# -----------------------------
-def delete_bus(bus_id):
-
-    for bus in buses:
-
-        if bus["id"] == bus_id:
-
-            buses.remove(bus)
-
-            return jsonify({
-                "message": "Bus Deleted Successfully"
-            })
-
-    return jsonify({"message": "Bus Not Found"}), 404
+    return jsonify(data), 200
