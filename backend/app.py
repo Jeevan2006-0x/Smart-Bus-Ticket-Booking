@@ -9,6 +9,7 @@ from routes.auth_routes import auth_bp
 from routes.bus_routes import bus_bp
 from routes.schedule_routes import schedule_bp
 from routes.booking_routes import booking_bp
+from routes.payment_routes import payment_bp
 
 # Import models
 from models.user import User
@@ -35,6 +36,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(bus_bp)
 app.register_blueprint(schedule_bp)
 app.register_blueprint(booking_bp)
+app.register_blueprint(payment_bp)
 
 @app.route("/")
 def home():
