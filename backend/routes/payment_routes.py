@@ -1,14 +1,6 @@
 from flask import Blueprint
 from controllers.payment_controller import add_payment
-from controllers.payment_controller import (
-    add_payment,
-    get_payments
-)
-from controllers.payment_controller import (
-    add_payment,
-    get_payments,
-    update_payment
-)
+
 from controllers.payment_controller import (
     add_payment,
     get_payments,
